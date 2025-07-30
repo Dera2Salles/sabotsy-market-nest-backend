@@ -46,7 +46,7 @@ To get a local copy up and running follow these simple steps.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/your_username/sabotsy-market-nest-backend.git
+   git clone https://github.com/Dera2Salles/sabotsy-market-nest-backend.git
    ```
 2. Install packages
    ```sh
