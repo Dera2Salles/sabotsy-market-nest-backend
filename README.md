@@ -107,4 +107,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Project Link: [https://github.com/your_username/sabotsy-market-nest-backend](https://github.com/Dera2Salles/sabotsy-market-nest-backend)
+Project Link: [https://github.com/Dera2Salles/sabotsy-market-nest-backend](https://github.com/Dera2Salles/sabotsy-market-nest-backend)
