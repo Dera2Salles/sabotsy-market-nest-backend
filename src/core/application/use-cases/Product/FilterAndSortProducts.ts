@@ -1,6 +1,6 @@
-import type { ProductEntity } from '@/domain/Entities/Product';
-import { leveinshtein_distance } from '@/application/utils/leveinshtein';
-import type { FilterAndSortProductsParams } from '@/domain/Entities/FilterAndSortProduct';
+import type { ProductEntity } from '@/core/domain/Entities/Product';
+import { leveinshtein_distance } from '@/core/application/utils/leveinshtein';
+import type { FilterAndSortProductsParams } from '@/core/domain/Entities/FilterAndSortProduct';
 
 export class FilterAndSortProductsUseCase {
   execute({

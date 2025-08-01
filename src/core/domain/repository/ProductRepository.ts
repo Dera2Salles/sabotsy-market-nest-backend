@@ -1,4 +1,4 @@
-import type { Result } from './../Types/Result';
+import type { Result } from '../Types/Result';
 import type { ProductEntity } from '../Entities/Product';
 import { ProductNotFoundException } from '../Exceptions';
 

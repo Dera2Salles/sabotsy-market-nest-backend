@@ -1,4 +1,4 @@
-import type { OrderRepository } from '@/domain/repository/OrderRepository';
+import type { OrderRepository } from '@/core/domain/repository/OrderRepository';
 
 export class CreateAnOrder {
   constructor(private repository: OrderRepository) {}

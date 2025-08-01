@@ -1,11 +1,11 @@
-import type { UserEntity } from '@/domain/Entities/User';
+import type { UserEntity } from '@/core/domain/Entities/User';
 import {
   UserNotFoundException,
   UserAlreadyExistException,
-} from '@/domain/Exceptions';
-import type { UserRepository } from '@/domain/repository/UserRepository';
-import type { Result } from '@/domain/Types';
-import { failure, success } from '@/domain/Types/Result';
+} from '@/core/domain/Exceptions';
+import type { UserRepository } from '@/core/domain/repository/UserRepository';
+import type { Result } from '@/core/domain/Types';
+import { failure, success } from '@/core/domain/Types/Result';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class UserMemoryStorage implements UserRepository {
   findUserbyId(UserId: number): Result<UserEntity, UserNotFoundException> {
     const userFound = this.user.find((user) => user.id == UserId);
     if (!userFound) {
-      return failure(new UserNotFoundException());
+      return failure(new UserNotFoundException('User Not Found'));
     }
     return success(userFound);
   }

@@ -1,14 +1,14 @@
-import type { UserEntity } from '@/domain/Entities/User';
+import type { UserEntity } from '@/core/domain/Entities/User';
 
 import type {
   UserAlreadyExistException,
   UserNotFoundException,
-} from '@/domain/Exceptions';
+} from '@/core/domain/Exceptions';
 
-import type { UserRepository } from '@/domain/repository/UserRepository';
-import type { Result } from '@/domain/Types';
+import type { UserRepository } from '@/core/domain/repository/UserRepository';
+import type { Result } from '@/core/domain/Types';
 
-import { failure, success } from '@/domain/Types/Result';
+import { failure, success } from '@/core/domain/Types/Result';
 
 export class UserRepositoryImp implements UserRepository {
   constructor(private source: UserRepository) {}

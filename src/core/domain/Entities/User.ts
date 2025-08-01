@@ -8,6 +8,7 @@ export class UserEntity {
   @IsNotEmpty()
   email: string;
   nom: string;
-  password: string;
+  @IsNotEmpty()
+  password?: string;
   role: UserRole;
 }

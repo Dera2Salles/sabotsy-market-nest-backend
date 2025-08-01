@@ -1,5 +1,5 @@
-import type { ProductEntity } from '@/domain/Entities/Product';
-import type { ProductRepository } from '@/domain/repository/ProductRepository';
+import type { ProductEntity } from '@/core/domain/Entities/Product';
+import type { ProductRepository } from '@/core/domain/repository/ProductRepository';
 
 export class InsertManyProduct {
   constructor(private repository: ProductRepository) {}

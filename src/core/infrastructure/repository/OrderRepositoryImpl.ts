@@ -2,7 +2,7 @@ import type { OrderEntity } from '../../domain/Entities/Order';
 import type { ProductEntity } from '../../domain/Entities/Product';
 import { OrderModel } from '../../domain/models/Order';
 import type { OrderRepository } from '../../domain/repository/OrderRepository';
-import type { ProductRepository } from '@/domain/repository/ProductRepository';
+import type { ProductRepository } from '@/core/domain/repository/ProductRepository';
 import type { Result } from '../../domain/Types';
 import { success, failure } from '../../domain/Types/Result';
 
