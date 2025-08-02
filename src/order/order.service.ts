@@ -13,7 +13,6 @@ export class OrderService {
   addProductService(product: ProductEntity) {
     const result = this.addProduct.execute(product);
     if (result.status == 'failure') throw new ForbiddenException(result.status);
-    console.log('eto , ', result.data);
     return { data: result.data };
   }
 
