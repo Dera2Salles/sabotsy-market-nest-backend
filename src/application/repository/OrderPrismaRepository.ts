@@ -19,11 +19,13 @@ export class OrderPrismaRepository implements OrderRepository {
           TotalPrice: order.OrderItemsTotalPrice,
           status: order.status,
           item: {
-            create: order.OrderItems.map((product) => ({
-              productId: product.id,
-              Quantity: product.unitOnCart,
-              productName: product.name,
-            })),
+            createMany: {
+              data: order.OrderItems.map((product) => ({
+                productId: product.id,
+                Quantity: product.unitOnCart,
+                productName: product.name,
+              })),
+            },
           },
         },
       });
