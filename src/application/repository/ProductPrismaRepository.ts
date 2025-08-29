@@ -18,6 +18,7 @@ export class ProductPrismaRepository implements ProductRepository {
           description: item.description,
           price: item.price,
           producerId: item.producerId,
+          unit: item.unit,
         })),
       });
 
