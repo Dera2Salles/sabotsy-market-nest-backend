@@ -3,9 +3,9 @@ export interface ProductEntity {
   producerId: string;
   price: number;
   unit: number;
-  unitOnCart: number;
+  unitOnCart?: number;
   name: string;
   category: string;
   description: string;
-  image: string;
+  filename: string;
 }
