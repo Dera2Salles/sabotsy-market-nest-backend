@@ -1,4 +1,3 @@
-import { LoginDto } from './../../auth/loginDto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -13,13 +12,30 @@ import {
 } from '@/domain/Exceptions';
 import { failure, Result, success } from '@/domain/Types/Result';
 
+export interface loginReturnType {
+  id: string;
+  password: string;
+  product: {
+    id: string;
+    name: string;
+    updatedAt: Date;
+    filename: string | null;
+    category: string;
+    description: string;
+    price: number;
+    unit: number;
+    producerId: string;
+    addedAt: Date;
+  }[];
+}
+
 @Injectable()
 export class UserPrismaRepository implements UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async signIn(
     userId: string,
-  ): Promise<Result<LoginDto, UserNotFoundException>> {
+  ): Promise<Result<loginReturnType, UserNotFoundException>> {
     try {
       const user = await this.prisma.producer.findFirst({
         where: {
@@ -32,18 +48,14 @@ export class UserPrismaRepository implements UserRepository {
             },
           ],
         },
-        select: { id: true, password: true },
+        select: { id: true, password: true, product: true },
       });
 
       if (!user) {
         return failure(new UserNotFoundException());
       }
 
-      return success({
-        identifier: user.id,
-
-        password: user.password,
-      });
+      return success(user);
     } catch (error) {
       console.error('Error', error);
       return failure(new UserNotFoundException());
