@@ -1,3 +1,4 @@
+import { FastifyReply } from 'fastify';
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -21,8 +23,19 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async logIn(@Body() loginData: LoginDto) {
-    return this.autService.logIn(loginData);
+  async logIn(@Body() loginData: LoginDto, @Res() reply: FastifyReply) {
+    const { token, msg, product } = await this.autService.logIn(loginData);
+
+    reply.setCookie('access_token', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 24 * 60 * 60, // 1 jour en secondes
+      domain: 'localhost',
+    });
+
+    return reply.send({ msg, product });
   }
 
   @Post('signup')
@@ -33,6 +46,6 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   getUserData(@Req() req: Request) {
-    return req.user;
+    return this.autService.getUserData(req.user as string);
   }
 }

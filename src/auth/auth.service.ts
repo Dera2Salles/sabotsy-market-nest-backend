@@ -46,14 +46,18 @@ export class AuthService {
     if (!isPasswordMatch) throw new ForbiddenException('Password incorrect');
 
     const payload = {
-      sub: result.data.identifier,
+      sub: result.data.id,
     };
 
     const token = await this.jwtService.signAsync(payload, {
       expiresIn: '5m',
       secret: this.config.get('JWT_SECRET'),
     });
-    return { msg: 'logged in', acces_token: token };
+    return {
+      msg: 'logged in',
+      product: result.data.product,
+      token,
+    };
   }
 
   async getUserData(id: string) {
