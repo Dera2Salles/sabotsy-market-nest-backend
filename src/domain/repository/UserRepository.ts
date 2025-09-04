@@ -4,12 +4,12 @@ import {
   UserAlreadyExistException,
   UserNotFoundException,
 } from '../Exceptions';
-import { LoginDto } from '@/auth/loginDto';
+import { loginReturnType } from '@/application/repository/UserPrismaRepository';
 
 export abstract class UserRepository {
   abstract signIn(
     login: string,
-  ): Promise<Result<LoginDto, UserNotFoundException>>;
+  ): Promise<Result<loginReturnType, UserNotFoundException>>;
   abstract register(
     user: UserEntity,
   ): Promise<Result<void, UserAlreadyExistException>>;

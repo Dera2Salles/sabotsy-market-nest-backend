@@ -5,7 +5,7 @@ import type { ProductEntity } from '../Entities/Product';
 export abstract class ProductRepository {
   abstract insertMany(product: ProductEntity[]): Promise<Result<void, Error>>;
 
-  // abstract getAll(): Promise<Result<ProductEntity[], Error>>;
+  abstract getAll(): Promise<Result<ProductEntity[], Error>>;
 
   // abstract getOneByName(
   //   productName: string,
