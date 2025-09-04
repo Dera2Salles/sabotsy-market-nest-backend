@@ -22,6 +22,7 @@ model Producer {
 model Product {
   id          String        @id @default(cuid())
   name        String
+  filename    String?
   category    String
   description String
   price       Int
