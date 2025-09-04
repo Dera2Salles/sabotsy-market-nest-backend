@@ -8,6 +8,7 @@ import fastifyMultipart from '@fastify/multipart';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as fastifyCookie from '@fastify/cookie';
 
 const bootstrap = async () => {
   const config = new ConfigService();
@@ -21,6 +22,19 @@ const bootstrap = async () => {
       logger: true,
     }),
   );
+
+  await app.register(fastifyCookie, {
+    secret: config.get('COOKIE_SECRET') as string,
+  });
+
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
 
   app.useGlobalPipes(new ValidationPipe());
 
