@@ -22,7 +22,7 @@ export class OrderPrismaRepository implements OrderRepository {
             createMany: {
               data: order.OrderItems.map((product) => ({
                 productId: product.id,
-                Quantity: product.unitOnCart,
+                Quantity: product?.unitOnCart,
                 productName: product.name,
               })),
             },
