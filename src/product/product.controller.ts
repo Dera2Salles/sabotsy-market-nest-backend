@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ParseIntPipe,
   Post,
   Req,
   UseGuards,
@@ -38,8 +39,11 @@ export class ProductController {
     return this.service.callInsertProduct(product);
   }
   @Get()
-  async get() {
-    return this.service.callGetProduct();
+  async get(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.service.callGetProduct(page, limit);
   }
 
   @Get('stream/:filename')

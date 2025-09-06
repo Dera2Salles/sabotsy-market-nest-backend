@@ -15,8 +15,8 @@ export class ProductService {
     if (result.status == 'failure') throw new ForbiddenException();
   }
 
-  async callGetProduct() {
-    const result = await this.getProduct.exexute();
+  async callGetProduct(page: number, limit: number) {
+    const result = await this.getProduct.exexute(page, limit);
     if (result.status == 'failure') throw new ForbiddenException();
     return result;
   }
