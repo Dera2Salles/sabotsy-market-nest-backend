@@ -69,9 +69,15 @@ export class ProductPrismaRepository implements ProductRepository {
     }
   }
 
-  async getAll(): Promise<RESULT<ProductEntity[], Error>> {
+  async getAll(
+    page: number,
+    limit: number,
+  ): Promise<RESULT<ProductEntity[], Error>> {
     try {
-      const result = await this.prisma.product.findMany({});
+      const result = await this.prisma.product.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
       const products: ProductEntity[] = result.map((item) => ({
         id: item.id,
         category: item.category,
