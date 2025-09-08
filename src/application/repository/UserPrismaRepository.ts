@@ -11,23 +11,9 @@ import {
   UserNotFoundException,
 } from '@/domain/Exceptions';
 import { failure, Result, success } from '@/domain/Types/Result';
-
-export interface loginReturnType {
-  id: string;
-  password: string;
-  product: {
-    id: string;
-    name: string;
-    updatedAt: Date;
-    filename: string | null;
-    category: string;
-    description: string;
-    price: number;
-    unit: number;
-    producerId: string;
-    addedAt: Date;
-  }[];
-}
+import { LoginDto } from '@/auth/loginDto';
+import { UserData } from '@/domain/repository/UserRepository';
+import { ProductEntity } from '@/domain/Entities/Product';
 
 @Injectable()
 export class UserPrismaRepository implements UserRepository {
@@ -35,7 +21,7 @@ export class UserPrismaRepository implements UserRepository {
 
   async signIn(
     userId: string,
-  ): Promise<Result<loginReturnType, UserNotFoundException>> {
+  ): Promise<Result<LoginDto, UserNotFoundException>> {
     try {
       const user = await this.prisma.producer.findFirst({
         where: {
@@ -48,14 +34,18 @@ export class UserPrismaRepository implements UserRepository {
             },
           ],
         },
-        select: { id: true, password: true, product: true },
+        select: { id: true, password: true, name: true },
       });
 
       if (!user) {
         return failure(new UserNotFoundException());
       }
 
-      return success(user);
+      return success({
+        identifier: user.id,
+        password: user.password,
+        name: user.name,
+      });
     } catch (error) {
       console.error('Error', error);
       return failure(new UserNotFoundException());
@@ -80,6 +70,44 @@ export class UserPrismaRepository implements UserRepository {
         if (e.code == 'P2002') return failure(new UserAlreadyExistException());
       }
       return failure(new DatabaseError());
+    }
+  }
+
+  async getData(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<Result<UserData>> {
+    try {
+      const result = await this.prisma.producer.findUnique({
+        where: { id: userId },
+        select: {
+          product: {
+            skip: (page - 1) * limit,
+            take: limit,
+          },
+          name: true,
+        },
+      });
+
+      const product = result?.product.map((item) => ({
+        id: item.id,
+        category: item.category,
+        description: item.description,
+        filename: item.filename as string,
+        name: item.name,
+        price: item.price,
+        producerId: item.producerId,
+        unit: item.unit,
+      })) as ProductEntity[];
+
+      return success({
+        name: result?.name as string,
+        product,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error();
     }
   }
 }
