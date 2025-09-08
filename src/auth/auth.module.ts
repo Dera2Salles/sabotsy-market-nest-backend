@@ -8,6 +8,7 @@ import { RegisterUserUseCase } from '@/application/use-cases/User/registerUserUs
 import { FindUserUseCase } from '@/application/use-cases/User/findUser';
 import { UserPrismaRepository } from '@/application/repository/UserPrismaRepository';
 import { PrismaModule } from '@/prisma/prisma.module';
+import { GetUserDataUseCase } from '@/application/use-cases/User/getData';
 
 @Module({
   imports: [PrismaModule, JwtModule.register({})],
@@ -19,6 +20,7 @@ import { PrismaModule } from '@/prisma/prisma.module';
     AuthService,
     FindUserUseCase,
     RegisterUserUseCase,
+    GetUserDataUseCase,
   ],
 })
 export class AuthModule {}
