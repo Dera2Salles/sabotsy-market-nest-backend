@@ -8,11 +8,13 @@ import { RegisterUserUseCase } from '@/application/use-cases/User/registerUserUs
 import { DatabaseError } from '@/domain/Exceptions';
 import { LoginDto } from './loginDto';
 import { ConfigService } from '@nestjs/config';
+import { GetUserDataUseCase } from '@/application/use-cases/User/getData';
 
 @Injectable()
 export class AuthService {
   constructor(
     private findUser: FindUserUseCase,
+    private getUserData: GetUserDataUseCase,
     private registerUser: RegisterUserUseCase,
     private jwtService: JwtService,
     private config: ConfigService,
@@ -46,7 +48,7 @@ export class AuthService {
     if (!isPasswordMatch) throw new ForbiddenException('Password incorrect');
 
     const payload = {
-      sub: result.data.id,
+      sub: result.data.identifier,
     };
 
     const token = await this.jwtService.signAsync(payload, {
@@ -55,16 +57,16 @@ export class AuthService {
     });
     return {
       msg: 'logged in',
-      product: result.data.product,
       token,
+      name: result.data.name,
     };
   }
 
-  async getUserData(id: string) {
-    const result = await this.findUser.execute(id);
+  async getUser(id: string, page: number, limit: number) {
+    const result = await this.getUserData.execute(id, page, limit);
     if (result.status == 'failure') {
       throw new ForbiddenException();
     }
-    return { data: result.data };
+    return { userData: result.data };
   }
 }
