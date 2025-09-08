@@ -19,14 +19,12 @@ import {
   Query,
   Param,
 } from '@nestjs/common';
-import * as fs from 'fs';
-import * as fsPromises from 'fs/promises';
 import { join } from 'path';
-import * as mime from 'mime-types';
 
 import { ProductService } from './product.service';
 import { ProductEntity } from '@/domain/Entities/Product';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @Controller('product')
 export class ProductController {
@@ -35,11 +33,21 @@ export class ProductController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async insertProduct(@Body() product: ProductEntity[]) {
-    return this.service.callInsertProduct(product);
+  async insertProduct(@Body() product: ProductEntity[], @Req() req: Request) {
+    const productToInsert: ProductEntity[] = product.map((item) => ({
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      description: item.description,
+      price: item.price,
+      producerId: req.user as string,
+      unit: item.unit,
+      filename: item.filename,
+    }));
+    return this.service.callInsertProduct(productToInsert);
   }
   @Get()
-  async get(
+  async getAll(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
   ) {
@@ -48,42 +56,20 @@ export class ProductController {
 
   @Get('stream/:filename')
   async streamFile(
-    @Param('filename') filename: string,
+    @Param('filename') fileName: string,
     @Query('disposition') disposition: 'attachment' | 'inline' = 'attachment',
     @Res() reply: FastifyReply,
   ) {
-    if (filename.includes('..') || filename.includes('/')) {
-      throw new HttpException(
-        'Nom de fichier invalide',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const filePath = join(this.basePath, filename);
-
     try {
-      await fsPromises.access(filePath, fs.constants.F_OK | fs.constants.R_OK);
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const contentType = mime.lookup(filePath) || 'application/octet-stream';
-
-      reply.header('Content-Type', contentType);
+      const result = await this.service.callGetFile(fileName);
+      reply.header('Content-Type', result.mimeType);
       reply.header(
         'Content-Disposition',
-        `${disposition}; filename="${filename}"`,
+        `${disposition}; filename="${fileName}"`,
       );
-
-      const stream = fs.createReadStream(filePath);
-
-      stream.on('error', (err) => {
-        console.error('Erreur lors du streaming :', err);
-        reply
-          .code(HttpStatus.INTERNAL_SERVER_ERROR)
-          .send('Erreur interne lors du streaming');
-      });
-
-      reply.send(stream);
+      reply.send(result.stream);
     } catch (error) {
+      // Gestion des erreurs spécifiques
       if (error.code === 'ENOENT') {
         throw new HttpException('Fichier non trouvé', HttpStatus.NOT_FOUND);
       } else if (error.code === 'EACCES') {
