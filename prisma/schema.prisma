@@ -14,13 +14,11 @@ model Producer {
   password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  product    Product[]
-
-
+  product   Product[]
 }
 
 model Product {
-  id          String        @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   filename    String?
   category    String
@@ -28,29 +26,27 @@ model Product {
   price       Int
   unit        Int
   producerId  String
-  addedAt     DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  addedAt     DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  producer    Producer      @relation(fields: [producerId], references: [id])
+  producer Producer @relation(fields: [producerId], references: [id])
 }
 
-
 model Order {
-  id          String     @id @default(cuid())
-  status      String
-  consumerId  String    @unique     
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  item        Item[] 
-  TotalItem   Int
-  TotalPrice  Int
-
+  id         String   @id @default(cuid())
+  status     String
+  consumerId String   @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  item       Item[]
+  TotalItem  Int
+  TotalPrice Int
 }
 
 model Item {
-  id        String   @id @default(cuid())
+  id          String @id @default(cuid())
   productName String
-  orderId   String
-  order     Order    @relation(fields: [orderId], references: [id])
-  Quantity  Int      @default(1)
+  orderId     String
+  order       Order  @relation(fields: [orderId], references: [id])
+  Quantity    Int    @default(1)
 }
