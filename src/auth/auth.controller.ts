@@ -5,7 +5,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -24,7 +26,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async logIn(@Body() loginData: LoginDto, @Res() reply: FastifyReply) {
-    const { token, msg, product } = await this.autService.logIn(loginData);
+    const { token, msg, name } = await this.autService.logIn(loginData);
 
     reply.setCookie('access_token', token, {
       httpOnly: true,
@@ -35,7 +37,7 @@ export class AuthController {
       domain: 'localhost',
     });
 
-    return reply.send({ msg, product });
+    return reply.send({ msg, name });
   }
 
   @Post('signup')
@@ -45,7 +47,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  getUserData(@Req() req: Request) {
-    return this.autService.getUserData(req.user as string);
+  getUserData(
+    @Req() req: Request,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.autService.getUser(req.user as string, page, limit);
   }
 }
