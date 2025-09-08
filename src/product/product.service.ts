@@ -1,3 +1,4 @@
+import { GetFileUseCase } from '@/application/use-cases/file/get';
 import { GetProductUseCase } from '@/application/use-cases/product/get';
 import { InsertProductUseCase } from '@/application/use-cases/product/insert';
 import { ProductEntity } from '@/domain/Entities/Product';
@@ -8,6 +9,7 @@ export class ProductService {
   constructor(
     private insertProduct: InsertProductUseCase,
     private getProduct: GetProductUseCase,
+    private getFile: GetFileUseCase,
   ) {}
 
   async callInsertProduct(product: ProductEntity[]) {
@@ -19,5 +21,12 @@ export class ProductService {
     const result = await this.getProduct.exexute(page, limit);
     if (result.status == 'failure') throw new ForbiddenException();
     return result;
+  }
+
+  async callGetFile(fileName: string) {
+    const result = await this.getFile.exexute(fileName);
+    if (result.status == 'failure') throw new ForbiddenException();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    return { mimeType: result.data.mimetype, stream: result.data.file };
   }
 }
