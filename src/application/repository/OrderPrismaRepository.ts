@@ -14,14 +14,12 @@ export class OrderPrismaRepository implements OrderRepository {
     try {
       await this.prisma.order.create({
         data: {
-          consumerId: order.clientNumber,
           TotalItem: order.OrderTotalItemUnit,
           TotalPrice: order.OrderItemsTotalPrice,
           status: order.status,
           item: {
             createMany: {
               data: order.OrderItems.map((product) => ({
-                productId: product.id,
                 Quantity: product?.unitOnCart,
                 productName: product.name,
               })),
