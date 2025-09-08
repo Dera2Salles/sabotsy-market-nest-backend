@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { OrderEntity } from '@/domain/Entities/Order';
 
@@ -6,6 +6,7 @@ import { OrderEntity } from '@/domain/Entities/Order';
 export class OrderController {
   constructor(private service: OrderService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post()
   async addOrder(@Body() order: OrderEntity) {
     return this.service.callPlaceOrder(order);
