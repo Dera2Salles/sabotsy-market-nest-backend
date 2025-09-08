@@ -9,77 +9,35 @@ import {
   Param,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import * as fs from 'fs'; // Pour createReadStream
-import * as fsPromises from 'fs/promises'; // Pour access (vérification asynchrone)
+import * as fs from 'fs';
+import * as fsPromises from 'fs/promises';
 import { join } from 'path';
-import * as mime from 'mime-types'; // Pour déterminer le Content-Type
+import * as mime from 'mime-types';
+import { FileService } from './file.service';
 
 @Controller('files')
 export class FileController {
-  constructor(private logger: Logger) {}
-  // Chemin de base vers le dossier des fichiers (modifiable selon votre structure)
+  constructor(
+    private logger: Logger,
+    private service: FileService,
+  ) {}
+
   private readonly basePath = join(process.cwd(), 'uploads');
 
-  /**
-   * Endpoint pour streamer un fichier spécifique.
-   *
-   * @param filename - Nom du fichier à streamer (ex. : 'monfichier.pdf').
-   * @param disposition - Query param optionnel : 'attachment' (force téléchargement) ou 'inline' (affiche dans le navigateur). Défaut : 'attachment'.
-   * @param reply - Objet de réponse Fastify pour envoyer le stream.
-   *
-   * Exemple d'appel : GET /files/stream/monfichier.pdf?disposition=inline
-   *
-   * Fonctionnement :
-   * 1. Valide le nom de fichier pour éviter les attaques (pas de '..').
-   * 2. Vérifie si le fichier existe et est lisible.
-   * 3. Détermine le Content-Type via mime-types.
-   * 4. Crée un stream de lecture et l'envoie au client.
-   * 5. Gère les erreurs (fichier introuvable, etc.).
-   */
   @Get('stream/:filename')
   async streamFile(
-    @Param('filename') filename: string,
+    @Param('filename') fileName: string,
     @Query('disposition') disposition: 'attachment' | 'inline' = 'attachment',
     @Res() reply: FastifyReply,
   ) {
-    // Validation du nom de fichier pour éviter les path traversal
-    if (filename.includes('..') || filename.includes('/')) {
-      throw new HttpException(
-        'Nom de fichier invalide',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const filePath = join(this.basePath, filename);
-
     try {
-      // Vérifie l'existence et les permissions de lecture de manière asynchrone
-      await fsPromises.access(filePath, fs.constants.F_OK | fs.constants.R_OK);
-
-      // Détermine le Content-Type basé sur l'extension (ex. : 'application/pdf', 'image/png')
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const contentType = mime.lookup(filePath) || 'application/octet-stream';
-
-      // Définit les en-têtes HTTP
-      reply.header('Content-Type', contentType);
+      const result = await this.service.callGetFile(fileName);
+      reply.header('Content-Type', result.mimeType);
       reply.header(
         'Content-Disposition',
-        `${disposition}; filename="${filename}"`,
+        `${disposition}; filename="${fileName}"`,
       );
-
-      // Crée un stream de lecture pour le fichier (efficace pour gros et petits fichiers)
-      const stream = fs.createReadStream(filePath);
-
-      // Gestion des événements du stream (optionnel, pour logging ou erreurs avancées)
-      stream.on('error', (err) => {
-        console.error('Erreur lors du streaming :', err);
-        reply
-          .code(HttpStatus.INTERNAL_SERVER_ERROR)
-          .send('Erreur interne lors du streaming');
-      });
-
-      // Envoie le stream au client
-      reply.send(stream);
+      reply.send(result.stream);
     } catch (error) {
       // Gestion des erreurs spécifiques
       if (error.code === 'ENOENT') {
