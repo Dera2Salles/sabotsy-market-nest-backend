@@ -10,4 +10,6 @@ export class LoginDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  name?: string;
 }
