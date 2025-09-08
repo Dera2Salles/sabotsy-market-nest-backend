@@ -33,11 +33,11 @@ export class FastifyUploadInterceptor implements NestInterceptor {
     if (!req.isMultipart()) {
       throw new BadRequestException('Content-Type must be multipart/form-data');
     }
+    const parts = req.parts();
 
     try {
       await fs.mkdir(this.options.dest, { recursive: true });
 
-      const parts = req.parts();
       let fileProcessed = false;
 
       for await (const part of parts) {
