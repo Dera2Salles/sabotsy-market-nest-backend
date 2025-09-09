@@ -46,6 +46,7 @@ model Order {
 model Item {
   id          String @id @default(cuid())
   productName String
+  producerId  String
   orderId     String
   order       Order  @relation(fields: [orderId], references: [id])
   Quantity    Int    @default(1)
