@@ -9,6 +9,7 @@ import { GetProductUseCase } from '@/application/use-cases/product/get';
 import { GetFileUseCase } from '@/application/use-cases/file/get';
 import { FileRepository } from '@/domain/repository';
 import { FileRepositoryImpl } from '@/application/repository/fileRepository';
+import { DeleteProductUseCase } from '@/application/use-cases/product/delete';
 
 @Module({
   controllers: [ProductController],
@@ -18,6 +19,7 @@ import { FileRepositoryImpl } from '@/application/repository/fileRepository';
     GetProductUseCase,
     PrismaService,
     GetFileUseCase,
+    DeleteProductUseCase,
     { provide: FileRepository, useClass: FileRepositoryImpl },
     { provide: ProductRepository, useClass: ProductPrismaRepository },
   ],

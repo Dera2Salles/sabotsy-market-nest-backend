@@ -10,11 +10,11 @@ export abstract class ProductRepository {
     limit: number,
   ): Promise<Result<ProductEntity[], Error>>;
 
+  abstract delete(productId: string): Promise<Result<void>>;
+
   // abstract getOneByName(
   //   productName: string,
   // ): Promise<Result<ProductEntity, ProductNotFoundException>>;
 
   // abstract update(product: ProductEntity): Promise<Result<void, Error>>;
-
-  // deleteOneById(productId: number): Promise<Result<void>>;
 }

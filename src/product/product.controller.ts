@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
+  HttpCode,
   ParseIntPipe,
   Post,
   Req,
@@ -104,5 +106,12 @@ export class ProductController {
         url: `/uploads/${req.fileData.originalname}`,
       },
     };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  async delete(@Param('id') productId: string) {
+    return this.service.callDelete(productId);
   }
 }

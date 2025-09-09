@@ -95,4 +95,15 @@ export class ProductPrismaRepository implements ProductRepository {
       return failure(Error());
     }
   }
+  async delete(productId: string): Promise<RESULT<void>> {
+    try {
+      await this.prisma.product.delete({
+        where: { id: productId },
+      });
+      return success(undefined);
+    } catch (error) {
+      console.error(error);
+      return failure(Error());
+    }
+  }
 }
