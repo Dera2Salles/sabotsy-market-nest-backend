@@ -22,6 +22,7 @@ export class OrderPrismaRepository implements OrderRepository {
               data: order.OrderItems.map((product) => ({
                 Quantity: product?.unitOnCart,
                 productName: product.name,
+                producerId: product.producerId,
               })),
             },
           },

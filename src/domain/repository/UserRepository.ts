@@ -10,6 +10,8 @@ import { ProductEntity } from '../Entities/Product';
 export interface UserData {
   name: string;
   product: ProductEntity[];
+  productTotalNumber: number;
+  productOnOrderTotalNumber: number;
 }
 
 export abstract class UserRepository {

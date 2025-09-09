@@ -87,7 +87,12 @@ export class UserPrismaRepository implements UserRepository {
             take: limit,
           },
           name: true,
+          _count: { select: { product: true } },
         },
+      });
+
+      const orderResult = await this.prisma.item.findMany({
+        where: { producerId: userId },
       });
 
       const product = result?.product.map((item) => ({
@@ -101,9 +106,16 @@ export class UserPrismaRepository implements UserRepository {
         unit: item.unit,
       })) as ProductEntity[];
 
+      const totalProductOnOrder = orderResult.reduce(
+        (total, item) => total + item.Quantity,
+        0,
+      );
+
       return success({
         name: result?.name as string,
         product,
+        productTotalNumber: result?._count.product as number,
+        productOnOrderTotalNumber: totalProductOnOrder,
       });
     } catch (error) {
       console.error(error);
