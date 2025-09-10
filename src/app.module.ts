@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/view/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
-import { FileModule } from './file/file.module';
-import { OrderModule } from './order/order.module';
-import { ProductModule } from './product/product.module';
+import { FileModule } from './file/view/file.module';
+import { OrderModule } from './order/view/order.module';
+import { ProductModule } from './product/view/product.module';
 
 @Module({
   imports: [
